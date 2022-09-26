@@ -1,4 +1,7 @@
 <%- include('header') -%>
+<button onclick="enableSSE()" type="button" class="btn btn-warning" id="sse_button" style="position:absolute; top:20px; left:20px;">
+    ENABLE SSE
+</button>
 <div class="container">
     <div class="row">
         <div class="col-md-4 offset-md-4 text-center">
@@ -23,16 +26,39 @@
 </div>
 
 <script type="text/javascript">
+    let b = false;
+
     function playMusic() {
         var audio = document.getElementById("media");
         audio.play();
+        b = true;
     }
-</script>
 
-<script type="text/javascript">
     function pauseMusic() {
         var audio = document.getElementById("media");
         audio.pause();
+        b = false;
+    }
+
+    let sse;
+
+    function enableSSE() {
+        sse = new EventSource("/stream");
+        sse.onmessage = playpause;
+        sse_button.textContent = "SSE ENABLED";
+        sse_button.className = "btn btn-outline-success";
+        sse_button.disabled = true;
+    }
+
+    function playpause() {
+        if (b) {
+            pauseMusic();
+            console.log("music paused!");
+        }
+        else {
+            playMusic();
+            console.log("music plays!");
+        }
     }
 </script>
 
